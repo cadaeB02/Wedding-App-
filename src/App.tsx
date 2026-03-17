@@ -6,7 +6,13 @@ import { GoogleGenAI } from '@google/genai';
 import { Heart, Sparkles, Quote, PartyPopper, Loader2 } from 'lucide-react';
 import { COUPLE_CONTEXT } from './coupleContext';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const getAI = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error('Gemini API key is not configured.');
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export default function App() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -70,7 +76,7 @@ export default function App() {
   const generateVows = async () => {
     setIsGeneratingVows(true);
     try {
-      const response = await ai.models.generateContent({
+      const response = await getAI().models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: `Write a short, extremely silly, and slightly absurd wedding vow for a couple named Torin Gregory and Molly Anne. Make it funny but ultimately sweet. Keep it under 4 sentences. \n\nHere is some background info on them. IMPORTANT: Use these details very subtly. Do not list their hobbies or traits. Just weave one or two small references in naturally so it feels organic and not forced:\n${COUPLE_CONTEXT}`,
       });
@@ -86,7 +92,7 @@ export default function App() {
   const generateAdvice = async () => {
     setIsGeneratingAdvice(true);
     try {
-      const response = await ai.models.generateContent({
+      const response = await getAI().models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: `Give one piece of highly unconventional, funny, but surprisingly practical marriage advice for a couple named Torin Gregory and Molly Anne. Keep it to one or two sentences. \n\nHere is some background info on them. IMPORTANT: Use these details very subtly. Do not list their hobbies or traits. Just weave one or two small references in naturally so it feels organic and not forced:\n${COUPLE_CONTEXT}`,
       });
